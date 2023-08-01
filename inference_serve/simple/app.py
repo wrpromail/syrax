@@ -3,14 +3,9 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-def import_model():
-    try:
-        from model import infer, eval
-    except ImportError:
-        print("ImportError: model.py not found")
-    return infer, eval
 
-infer_func, eval_func = import_model()
+from model import infer_func, eval_func
+print("finish model loading")
 
 @app.get("/eval")
 def model_eval():
@@ -22,5 +17,10 @@ def model_infer(request: str):
         return infer_func(request)
     except Exception as e:
         return str(e)
+
+
+@app.get("/ping")
+def system_ping():
+    return "pong"
 
 
