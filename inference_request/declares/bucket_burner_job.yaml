@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: bucket-burner-1
+  namespace: wangrui
+spec:
+  template:
+    spec:
+      containers:
+      - name: bucket-burner
+        image: cs-ai.tencentcloudcr.com/triton/llama-test:linuxbuild1
+        env:
+        - name: TARGET_IP
+          value: "192.168.5.73"
+        - name: MODEL_NAME
+          value: "fastertransformer"
+        - name: REQUEST_PROTOCOL
+          value: "http"
+        - name: REPEAT
+          value: "10"
+        - name: TEMPERATURE
+          value: "0.0"
+        - name: OUTPUT_TAG
+          value: "int8ft"
+        - name: OUTPUT_FOLDER
+          value: "/job_output"
+        volumeMounts:
+        - name: output-volume
+          mountPath: /job_output
+        command:
+          - "python3"
+        args:
+          - "/app/bucket_burner.py"
+      volumes:
+      - name: output-volume
+        nfs:
+          server: 10.0.0.21
+          path: /973ebyzk/job_output
+      restartPolicy: Never
+      imagePullSecrets:
+        - name: image-credentials

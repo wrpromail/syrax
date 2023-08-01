@@ -1,0 +1,12 @@
+datasets==2.13.1
+matplotlib==3.7.2
+numpy==1.25.0
+pandas==2.0.3
+tqdm==4.65.0
+transformers==4.30.2
+grpcio==1.54.0
+google==3.0.0
+gevent==22.10.2
+geventhttpclient==2.0.9
+elasticsearch
+textdistance==4.5.0

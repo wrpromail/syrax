@@ -1,0 +1,10 @@
+data_source:
+  type: elastic
+  endpoint: "http://es-cn-x0r3ba8hc0002lx4v.public.elasticsearch.aliyuncs.com:9200"
+  auth:
+    username: "elastic"
+    password: "devopsCS123"
+  index_name: "llama_test"
+  model_config: 
+  - fp16
+  - int8

@@ -1,0 +1,57 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: triton-model-perf-test
+  namespace: wangrui
+spec:
+  parallelism: 3
+  completions: 3
+  template:
+    metadata:
+      name: triton-model-perf-test
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: job-name
+                      operator: In
+                      values:
+                        - triton-model-perf-test
+                topologyKey: kubernetes.io/hostname
+      initContainers:
+        - name: init-wait
+      containers:
+        - name: job-container
+          env:
+            - name: JOB_SEQ
+              value: ""
+            - name: PROMPT_PREFIX
+              value: ""
+            - name: MODEL_NAME
+              value: "fastertransformer"
+            - name: REQUEST_PROTOCOL
+              value: "http"
+            - name: REQUEST_CONCURRENCY
+              value: "20"
+            - name: TARGET_IP
+              value: "150.158.239.229"
+            - name: MODE
+              value: "legacy"
+            - name: PROMPT_COUNT
+              value: "200"
+            - name: TOKENIZER_TYPE
+              value: "local_tokenizer"
+            - name: TOKENIZER_LOCATION
+              value: "./tokenizer"
+            - name: PROMPT_SOURCE_TYPE
+              value: "local_prompt_source"
+            - name: PROMPT_SOURCE_LOCATION
+              value: "./source/leetcode_free_questions_text.parquet"
+            - name: OUTPUT_FOLDER
+              value: "."
+          image: "devops-docker.pkg.codingcorp.woa.com/ai/docker/llama-test:0.1"
+      restartPolicy: Never
