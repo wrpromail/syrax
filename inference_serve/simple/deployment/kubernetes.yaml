@@ -1,25 +1,55 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: myapp
+  name: inference
 spec:
+  replicas: 1
   selector:
     matchLabels:
-      app: myapp
+      app: inference
   template:
     metadata:
       labels:
-        app: myapp
+        app: inference
     spec:
+      # initContainers:
+      # - name: install-dependencies
+      #   image: python:3.8-slim
+      #   command:
+      #   - /bin/bash
+      #   - -c
+      #   - pip install some-dependency1 some-dependency2 && touch /usr/local/lib/python3.10/site-packages/dependencies_installed
+      #   volumeMounts:
+      #   - name: python-packages
+      #     mountPath: /usr/local/lib/python3.10/site-packages
       containers:
-      - name: myapp
-        image: <Image>
+      - name: inference
+        image: your-registry/your-image-name:latest
+        env:
+        - name: MODEL_PATH
+          value: "/app/chatglm2-6b"
+        - name: TOKENIZER_PATH
+          value: "/app/chatglm2-6b"
+        volumeMounts:
+        - name: model-data
+          mountPath: /app/chatglm2-6b
+        - name: model-script
+          mountPath: /app/model.py
+          subPath: model.py
+        - name: python-packages
+          mountPath: /usr/local/lib/python3.10/site-packages
+        ports:
+        - containerPort: 8000
         resources:
           limits:
-            memory: "128Mi"
-            cpu: "500m"
-        ports:
-        - containerPort: <Port>
----
-apiVersion: v1 
-kind: Service
+            nvidia.com/gpu: 1
+      volumes:
+      - name: model-data
+        hostPath:
+          path: /data/chatglm2-6b
+      - name: model-script
+        hostPath:
+          path: /data/syrax/inference_serve/simple/model.py
+      - name: python-packages
+        hostPath:
+          path: /usr/local/lib/python3.10/dist-packages

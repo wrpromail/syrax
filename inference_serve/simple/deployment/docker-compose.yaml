@@ -1,0 +1,29 @@
+version: "3.9"
+services:
+  # 创建一个 install-python-deps 服务来安装模型需要的依赖
+  # 然后让两个服务共享一个 volume
+  #install-python-deps:
+  #  # 这里的 image 就是 simple 目录下 Dockerfile 构建的镜像
+  #  image: your-registry/your-image-name:latest
+  #  command: >
+  #    pip3 install -r model_requirements.txt
+    
+  inference:
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+    image: your-registry/your-image-name:latest
+    environment:
+      - MODEL_PATH=/app/chatglm2-6b
+      - TOKENIZER_PATH=/app/chatglm2-6b
+    volumes:
+      - /data/chatglm2-6b:/app/chatglm2-6b
+      - /data/syrax/inference_serve/simple/model.py:/app/model.py
+      - /usr/local/lib/python3.10/dist-packages:/usr/local/lib/python3.10/site-packages
+    ports:
+      - "8000:8000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            count: all
+            capabilities: [gpu]

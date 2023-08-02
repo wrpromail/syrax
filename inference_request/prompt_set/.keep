@@ -1,0 +1,8 @@
+准备推理数据集，需要根据模型对请求数据进行调整。
+举个例子，比如对于 llama、glm 这样的综合语言模型，我们通常需要在 prompt 添加一些前缀
+比如为模型设定一些角色。
+
+而对于 https://huggingface.co/THUDM/codegeex2-6b 这样具有特定使用场景的模型，
+在无法获取全部模型输入输出参数，需要以特定结构发起请求，比如
+"# language: Python\n# write a bubble sort function\n"
+那么就需要将推理请求数据集修改为满足模型、场景需要的格式。
