@@ -2,3 +2,4 @@ fastapi
 uvicorn
 idna
 click
+padantic
