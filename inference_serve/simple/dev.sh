@@ -15,3 +15,6 @@ sudo apt-get install -y nvidia-container-toolkit
 # 可以将宿主机的 python3 site 目录也挂载进去，在容器中不再安装依赖，当然这个方式是不推荐的
 # 注意安装上述 nvidia-container-toolkit 在执行 docker run 命令时需指定 --gpus all
 docker run  --gpus all --network host -it --rm -e MODEL_PATH=/app/chatglm2-6b -v /data/chatglm2-6b:/app/chatglm2-6b -v /data/syrax/inference_serve/simple/model.py:/app/model.py -v /usr/local/lib/python3.10/dist-packages:/usr/local/lib/python3.10/site-packages 1f25d460ae70 /bin/bash
+
+# 容器中运行 python http 服务代码
+uvicorn app:app --host 0.0.0.0 --port 8000
