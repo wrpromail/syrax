@@ -11,11 +11,11 @@ from model import model_infer, model_eval
 print("finish model loading")
 
 @app.get("/eval")
-def model_eval():
+def model_eval_get():
     return model_eval()
 
 @app.get("/infer")
-def model_infer(request: str):
+def model_infer_get(request: str):
     try:
         return model_infer(request)
     except Exception as e:
